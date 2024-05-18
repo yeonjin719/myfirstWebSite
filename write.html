@@ -41,31 +41,19 @@
         </div>
       </div>
     </nav>
-    <div class="p-3">
-      <div class="grid gap-0 row-gap-3">
-        <div class="p-2 g-col-6">
-          <label for="할 일" class="form-label">오늘의 할 일</label>
-          <input
-            type="text"
-            class="form-control"
-            aria-label="할 일"
-            aria-describedby="할 일"
-          />
+    <div class="container mt-3">
+      <form action="/add" method="POST">
+        <div class="form-group">
+          <label>오늘의 할 일</label>
+          <input type="text" class="form-control" name="title" />
         </div>
-        <div class="p-2 g-col-6">
-          <label for="Due date" class="form-label">세부 내용</label>
-          <div class="input-group">
-            <textarea
-              class="form-control custom-textarea"
-              id="exampleFormControlTextarea1"
-              rows="1"
-              oninput="autoResize(this)"
-            ></textarea>
-          </div>
-          <br />
-          <button type="button" class="btn btn-light">저장하기</button>
+        <div class="form-group">
+          <label>세부 내용</label>
+          <input type="text" class="form-control" name="detail" />
         </div>
-      </div>
+        <br />
+        <button type="submit" class="btn btn-outline-secondary">Submit</button>
+      </form>
     </div>
 
     <script>
@@ -89,12 +77,5 @@
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
     ></script>
-
-    <style>
-      /* 추가한 CSS */
-      .custom-textarea {
-        height: 100px; /* 원하는 높이로 설정하세요 */
-      }
-    </style>
   </body>
 </html>
