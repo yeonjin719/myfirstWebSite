@@ -19,10 +19,6 @@ MongoClient.connect(
   }
 );
 
-app.get("/home", function (req, res) {
-  // res.sendFile(__dirname + "/index.ejs");
-  res.render("index.ejs");
-});
 app.get("/write", function (req, res) {
   res.render("write.ejs");
 });
@@ -30,21 +26,11 @@ app.get("/list", async (request, response) => {
   let result = await db.collection("post").find().toArray();
   response.render("list.ejs", { posts: result });
 });
-// app.get("/list",  (res, req) => {
-//   db.collection("todolist")
-//     .find()
-//     .toArray(function (error, 결과) {
-//       console.log(결과);
-//       req.render("list.ejs", { posts: 결과 });
-//     });
-// });
-// '/' 하나는 홈화면이라는 뜻
 app.get("/", function (req, res) {
   res.render("index.ejs");
 });
 
-app.post("/add", (res, req) => {
-  req.send("전송완료");
+app.post("/add", (req, res) => {
   db.collection("counter").findOne(
     { name: "게시물 갯수" },
     function (error, 결과) {
@@ -52,8 +38,8 @@ app.post("/add", (res, req) => {
       db.collection("post").insertOne(
         {
           _id: 결과.totalPost + 1,
-          할일: res.body.title,
-          세부사항: res.body.detail,
+          할일: req.body.title,
+          세부사항: req.body.detail,
         },
         function (에러, 결과) {
           console.log("저장완료");
@@ -68,6 +54,20 @@ app.post("/add", (res, req) => {
           );
         }
       );
+      res.redirect("/list"); //이걸로 add 페이지에 머물던 것 해결
     }
   );
+});
+
+app.delete("/delete", function (req, res) {
+  req.body._id = parseInt(req.body._id);
+  db.collection("post").deleteOne(req.body, function (err, result) {
+    if (err) {
+      console.error("삭제 실패:", err);
+      res.status(500).send("삭제 실패");
+    } else {
+      console.log("삭제 완료");
+      res.status(200).send("삭제 완료");
+    }
+  });
 });

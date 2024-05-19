@@ -44,14 +44,14 @@
     <div class="container mt-3">
       <h2>서버에서 가져온 할 일 리스트💛</h2>
       <% for(let i=0;i<posts.length;i++){ %>
-        <div class="container m-3" style="border: 1px solid #000; border-radius: 10px; display: flex; ">
+        <div class="container m-3" style="border: 1px solid #000; border-radius: 10px; display: flex; " id="OneTodo">
           <div class="container m-3">
             <h4><%= posts[i].할일 %></h4>
             <p><%= posts[i].세부사항 %></p>
             <button type="button" class="btn btn-outline-secondary btn-sm">수정하기</button>
           </div>
           <div class="container m-3" style="align-self: center;">
-            <button type="button" class="btn-close" aria-label="Close" style="float:right"></button>
+            <button type="button" class="btn-close" aria-label="Close" style="float:right" data-id="<%= posts[i]._id %>"></button>
           </div>
         </div>
       <% } %>
@@ -72,5 +72,18 @@
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
     ></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+    $('.btn-close').click(function(){
+      $.ajax({
+      method:"DELETE",
+      url: '/delete',
+      data : {_id:$(this).data('id')}
+    }).done((결과)=>{
+      $(this).parent('div').parent('div').fadeOut();
+    })
+    });
+    
+  </script>
   </body>
 </html>
