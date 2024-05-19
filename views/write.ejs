@@ -10,6 +10,7 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <meta http-equiv="Content-Type" content="text/html" />
   </head>
   <body>
     <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
@@ -42,14 +43,14 @@
       </div>
     </nav>
     <div class="container mt-3">
-      <form action="/add" method="POST">
+      <form action="/add" method="POST" id="todoMemo">
         <div class="form-group">
           <label>오늘의 할 일</label>
-          <input type="text" class="form-control" name="title" />
+          <input type="text" class="form-control" name="title" id="title" />
         </div>
         <div class="form-group">
           <label>세부 내용</label>
-          <input type="text" class="form-control" name="detail" />
+          <input type="text" class="form-control" name="detail" id="detail" />
         </div>
         <br />
         <button type="submit" class="btn btn-outline-secondary">Submit</button>

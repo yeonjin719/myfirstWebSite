@@ -19,10 +19,6 @@ MongoClient.connect(
   }
 );
 
-app.get("/home", function (req, res) {
-  // res.sendFile(__dirname + "/index.ejs");
-  res.render("index.ejs");
-});
 app.get("/write", function (req, res) {
   res.render("write.ejs");
 });
@@ -30,21 +26,12 @@ app.get("/list", async (request, response) => {
   let result = await db.collection("post").find().toArray();
   response.render("list.ejs", { posts: result });
 });
-// app.get("/list",  (res, req) => {
-//   db.collection("todolist")
-//     .find()
-//     .toArray(function (error, 결과) {
-//       console.log(결과);
-//       req.render("list.ejs", { posts: 결과 });
-//     });
-// });
-// '/' 하나는 홈화면이라는 뜻
 app.get("/", function (req, res) {
   res.render("index.ejs");
 });
 
 app.post("/add", (res, req) => {
-  req.send("전송완료");
+  req.redirect("/list"); //이걸로 add 페이지에 머물던 것 해결
   db.collection("counter").findOne(
     { name: "게시물 갯수" },
     function (error, 결과) {
