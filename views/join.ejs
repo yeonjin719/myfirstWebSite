@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>To Do Web</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <%- include('nav.ejs')%>
+    <br />
+    <div class="container mt-3" style="width: 800px">
+      <p class="h5">Sign up</p>
+    </div>
+    <div class="container mt-3" style="width: 800px">
+      <form action="/joinAction" method="POST" id="newmember">
+        <div class="container mt-3">
+          <div class="input-group flex-nowrap">
+            <span
+              class="input-group-text"
+              id="addon-wrapping"
+              style="width: 120px"
+              >이름</span
+            >
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Name"
+              aria-label="username"
+              id="userName"
+              name="userName"
+              aria-describedby="addon-wrapping"
+              required
+            />
+            <!-- required 넣어주면 미작성인채로 submit이 되는 걸 방지해줌 -->
+          </div>
+        </div>
+        <div class="container mt-3">
+          <div class="input-group flex-nowrap">
+            <span
+              class="input-group-text"
+              id="addon-wrapping"
+              style="width: 120px"
+              >이메일</span
+            >
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Email"
+              aria-label="email"
+              name="userEmailID"
+              id="userEmailID"
+              required
+            />
+            <button
+              id="doubleID"
+              type="button"
+              class="btn btn-outline-secondary"
+            >
+              이메일 중복확인
+            </button>
+          </div>
+        </div>
+        <div class="container mt-3">
+          <div class="input-group flex-nowrap">
+            <span
+              class="input-group-text"
+              id="addon-wrapping"
+              style="width: 120px"
+              >비밀번호</span
+            >
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Password"
+              aria-label="userPassword"
+              id="userPW"
+              name="userPW"
+              aria-describedby="addon-wrapping"
+              required
+            />
+          </div>
+        </div>
+        <div class="container mt-3">
+          <div class="input-group flex-nowrap">
+            <span
+              class="input-group-text"
+              id="addon-wrapping"
+              style="width: 120px"
+              >비밀번호 확인</span
+            >
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Password"
+              id="cpassword"
+              name="cpassword"
+              aria-label="password"
+              aria-describedby="addon-wrapping"
+              required
+            />
+          </div>
+        </div>
+        <div class="container mt-3">
+          <a
+            class="link-body-emphasis link-offset-2 link-underline-opacity-0 link-opacity-50"
+            href="/login"
+            style="float: left"
+            >로그인 하기</a
+          >
+          <button
+            id="signupButton"
+            type="submit"
+            class="btn btn-outline-secondary"
+            style="float: right"
+            disabled
+          >
+            회원가입
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      document
+        .getElementById("newmember")
+        .addEventListener("submit", function (event) {
+          var userEmailID = document.getElementById("userEmailID").value;
+          var username = document.getElementById("username").value;
+          var userPW = document.getElementById("userPW").value;
+          var cpassword = document.getElementById("cpassword").value;
+          if (userPW !== cpassword) {
+            event.preventDefault(); // 폼 제출 막기
+            alert("비밀번호가 일치하지 않습니다.");
+          } else if (userPW.length < 4 || cpassword.length < 4) {
+            event.preventDefault(); // 폼 제출 막기
+            alert("비밀번호는 4자 이상으로 입력해주세요.");
+          }
+        });
+    </script>
+    <script>
+      document
+        .getElementById("doubleID")
+        .addEventListener("click", function () {
+          var userEmailID = $("#userEmailID").val();
+          $.ajax({
+            method: "POST",
+            url: "/duplicateID",
+            data: {
+              userEmailID: userEmailID,
+            },
+            dataType: "json", // JSON 명시
+            success: function (response) {
+              if (response.message === "중복된 아이디입니다.") {
+                $("#userEmailID").val(""); // 입력 필드 초기화
+                alert(response.message);
+                $("#signupButton").prop("disabled", true);
+              } else {
+                alert(response.message);
+                $("#signupButton").prop("disabled", false);
+              }
+            },
+            error: function () {
+              alert("에러");
+            },
+          });
+        });
+    </script>
+  </body>
+</html>
