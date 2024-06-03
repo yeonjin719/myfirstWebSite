@@ -7,6 +7,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy; // 여기서 LocalStrategy로 수정
 const session = require("express-session");
 const { message } = require("statuses");
+const methodOverride = require("method-override");
 
 var db;
 
@@ -35,7 +36,7 @@ app.get("/images/:img", function (req, res) {
   res.sendFile(__dirname + "/images/" + req.params.img);
 });
 app.get("/write", function (req, res) {
-  res.render("write.ejs", { user: req.user });
+  res.render("write.ejs", { user: req.user ? req.user.id : undefined });
 });
 app.get("/list", async (req, res) => {
   let result = await db.collection("post").find().toArray();
@@ -56,10 +57,44 @@ app.get("/mypage", doLogin, function (req, res) {
 app.get("/fail", function (req, res) {
   res.send("로그인 실패. 다시 시도하세요.");
 });
-// app.get("/logout", function (req, res) {
-//   res.redirect("/");
-// });
-
+app.get("/detail/:id", async (req, res) => {
+  const result = await db.collection("post").findOne({ _id: +req.params.id });
+  if (result) {
+    res.status(200).render("detail.ejs", {
+      post: result,
+      user: req.user ? req.user.id : undefined,
+    });
+  } else {
+    req.status(400).render("detail.ejs", {
+      error: "The post is not found",
+      user: req.user ? req.user.id : undefined,
+    });
+  }
+});
+app.get("/edit/:id", async (req, res) => {
+  const result = await db.collection("post").findOne({ _id: +req.params.id });
+  if (result) {
+    res.status(200).render("edit.ejs", { post: result, user: req.user });
+  } else {
+    res
+      .status(400)
+      .render("edit.ejs", { error: "The post is not found", user: req.user });
+  }
+});
+app.post("/edit/:id", async (req, res) => {
+  const { title, detail } = req.body;
+  const id = parseInt(req.params.id);
+  const {
+    result: { nModified },
+  } = await db
+    .collection("post")
+    .updateOne({ _id: +id }, { $set: { title: title, detail: detail } });
+  if (nModified == 1) {
+    res.redirect("/list");
+  } else {
+    res.status(400).send("Fail to modify the post.");
+  }
+});
 //글 작성 기능
 app.post("/add", (req, res) => {
   db.collection("counter").findOne(
@@ -69,9 +104,9 @@ app.post("/add", (req, res) => {
       db.collection("post").insertOne(
         {
           _id: 결과.totalPost + 1,
-          할일: req.body.title,
-          세부사항: req.body.detail,
-          아이디: req.user.userEmailID,
+          title: req.body.title,
+          detail: req.body.detail,
+          ID: req.user.userEmailID,
         },
         function (에러, 결과) {
           console.log("저장완료");
@@ -106,6 +141,8 @@ app.delete("/delete", function (req, res) {
     }
   });
 });
+
+app.get("/edit", function (req, res) {});
 
 // 회원가입 기능
 app.post("/joinAction", function (req, res) {
@@ -196,7 +233,7 @@ function doLogin(req, res, next) {
     res.send("로그인이 필요합니다.");
   }
 }
-
+// 아이디 중복 확인 기능
 app.post("/duplicateID", function (req, res) {
   db.collection("member").findOne(req.body, function (error, result) {
     if (result) {
@@ -207,8 +244,8 @@ app.post("/duplicateID", function (req, res) {
   });
 });
 
+// 로그아웃 기능
 app.post("/logout", (req, res) => {
-  // req.logout();
   req.session.destroy(); // 세션 파기
   res.redirect("/");
 });
