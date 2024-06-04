@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>To Do Web</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- navigation bar html 첨부 -->
+    <%- include('nav.ejs')%>
+    <!-- 전체 todo 목록이 담겨있는 div(container) -->
+    <div class="container mt-3">
+      <h2 style="font-family: IBM Plex Sans KR, sans-serif">To Do List💛</h2>
+      <% for(let i=0;i<posts.length;i++){ %>
+        <!-- 한 개의 todo가 담겨있는 div(container) -->
+        <div class="container m-3" style="border: 1px solid #000; border-radius: 10px; display: flex; " id="OneTodo" >
+          <div class="container m-3" style="align-self: center;"onclick="location.href='/detail/<%= posts[i]._id %>'">
+            <h6 style="font-family: IBM Plex Sans KR, sans-serif"><strong><%=posts[i].ID%></strong></h6>
+            <h5 style="font-family: IBM Plex Sans KR, sans-serif"><strong><%= posts[i].title %></strong></h5>
+          </div>
+          <div class="container m-3" style="align-self: center;">
+            <!-- 버튼 오른쪽 정렬 -->
+            <button type="button" class="btn-close" aria-label="Close" style="float:right" data-id="<%= posts[i]._id %>"></button>
+          </div>
+        </div>
+      <% } %>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <!-- 삭제(X)버튼이 눌렸을 때 작동되는 script -->
+    <script>
+      // 삭제 버튼이 눌리면
+    $('.btn-close').click(function(){
+      $.ajax({
+      method:"DELETE",
+      url: '/delete',
+      data : {_id:$(this).data('id')}
+    }).done((결과)=>{
+      // 눌린 버튼의 부모에 해당하는 div의 부모에 해당하는 div를 fadeout 시킴
+      $(this).parent('div').parent('div').fadeOut();
+    })
+    });
+  </script>
+  </body>
+</html>
