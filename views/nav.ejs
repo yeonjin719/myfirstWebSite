@@ -1,6 +1,17 @@
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap"
+  rel="stylesheet"
+/>
 <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">To Do Web</a>
+    <a
+      class="navbar-brand"
+      href="/"
+      style="font-family: IBM Plex Sans KR, sans-serif"
+      >To Do Web</a
+    >
     <button
       class="navbar-toggler"
       type="button"
@@ -19,28 +30,60 @@
       <!-- class에 justify-content-between 추가하고 각각 왼/오른쪽으로 정렬할 것들끼리 ul로 감싸 나눠주면 왼쪽, 오른쪽 정렬됨 -->
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/">Home</a>
+          <a
+            class="nav-link active"
+            aria-current="page"
+            href="/"
+            style="font-family: IBM Plex Sans KR, sans-serif"
+            >Home</a
+          >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/list">List</a>
+          <a
+            class="nav-link"
+            href="/list"
+            style="font-family: IBM Plex Sans KR, sans-serif"
+            >List</a
+          >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/write">Write</a>
+          <a
+            class="nav-link"
+            href="/write"
+            style="font-family: IBM Plex Sans KR, sans-serif"
+            >Write</a
+          >
         </li>
       </ul>
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="/mypage">My Page</a>
+          <a
+            class="nav-link"
+            href="/mypage"
+            style="font-family: IBM Plex Sans KR, sans-serif"
+            >My Page</a
+          >
         </li>
         <% if (user && user.userName) { %>
         <li class="nav-item">
           <form action="/logout" method="post">
-            <button type="submit" class="nav-link">Log out</button>
+            <button
+              type="submit"
+              class="nav-link"
+              style="font-family: IBM Plex Sans KR, sans-serif"
+            >
+              Log out
+            </button>
           </form>
         </li>
         <% } else { %>
         <li class="nav-item">
-          <a class="nav-link" href="/login">Sign / Log In</a>
+          <a
+            class="nav-link"
+            href="/login"
+            style="font-family: IBM Plex Sans KR, sans-serif"
+            >Sign / Log In</a
+          >
         </li>
         <% } %>
       </ul>

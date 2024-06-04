@@ -10,14 +10,34 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <%- include('nav.ejs')%>
-    <h4 class="container mt-5">
-      <strong><%=user.userName%> 님의 마이페이지</strong>
-    </h4>
-    <div class="container mt-4"></div>
-
+    <div class="container mt-5">
+      <h4 style="font-family: IBM Plex Sans KR, sans-serif"><strong>"<%=user.userName%>" 님의 To Do List!</strong></h4>
+      <h5 style="font-family: IBM Plex Sans KR, sans-serif"><strong>이메일 주소: <%=user.userEmailID%></strong></h5>
+    <div class="container mt-3">
+      <% for(let i=0;i<posts.length;i++){ %>
+        <% if (posts[i].ID === user.userEmailID){ %>
+        <!-- 한 개의 todo가 담겨있는 div(container) -->
+        <div class="container m-3" style="border: 1px solid #000; border-radius: 10px; display: flex; " id="OneTodo" >
+          <div class="container m-3" onclick="location.href='/detail/<%= posts[i]._id %>'">
+            <h5 style="font-family: IBM Plex Sans KR, sans-serif"><strong><%= posts[i].title %></strong></h5>
+          </div>
+          <div class="container m-3" style="align-self: center;">
+            <!-- 버튼 오른쪽 정렬 -->
+            <button type="button" class="btn-close" aria-label="Close" style="float:right" data-id="<%= posts[i]._id %>"></button>
+          </div>
+        </div>
+        <% } %>
+      <% } %>
+    </div>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -33,5 +53,10 @@
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
     ></script>
+    <script>
+      if (!user){
+        alert("로그인이 필요한 서비스입니다.")
+      }
+    </script>
   </body>
 </html>

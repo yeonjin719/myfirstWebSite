@@ -10,6 +10,12 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
@@ -87,6 +93,7 @@
             />
           </div>
         </div>
+        <!-- 비밀번호 확인 입력란에도 id="userPW"를 사용하고 있어서 수정합니다. -->
         <div class="container mt-3">
           <div class="input-group flex-nowrap">
             <span
@@ -107,6 +114,7 @@
             />
           </div>
         </div>
+
         <div class="container mt-3">
           <a
             class="link-body-emphasis link-offset-2 link-underline-opacity-0 link-opacity-50"
@@ -142,12 +150,24 @@
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
     ></script>
+    <!-- JavaScript 코드를 추가하여 입력한 값들을 유지하고, 경고창을 띄웁니다. -->
+    <script>
+      // 서버에서 전송된 에러 메시지가 있을 경우 alert 창으로 표시하고, 입력한 값들을 유지합니다.
+      const errorMessage = "<%= errorMessage %>";
+      if (errorMessage) {
+        alert(errorMessage);
+        document.getElementById("userName").value = "<%= userName %>";
+        document.getElementById("userEmailID").value = "<%= userEmailID %>";
+        document.getElementById("userPW").value = "<%= userPW %>";
+        document.getElementById("cpassword").value = "<%= cpassword %>";
+      }
+    </script>
     <script>
       document
         .getElementById("newmember")
         .addEventListener("submit", function (event) {
           var userEmailID = document.getElementById("userEmailID").value;
-          var username = document.getElementById("username").value;
+          var username = document.getElementById("userName").value;
           var userPW = document.getElementById("userPW").value;
           var cpassword = document.getElementById("cpassword").value;
           if (userPW !== cpassword) {

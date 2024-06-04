@@ -11,6 +11,12 @@
       crossorigin="anonymous"
     />
     <meta http-equiv="Content-Type" content="text/html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <!-- 네이게이션 바 html 첨부 -->
@@ -19,18 +25,21 @@
     <div class="container mt-3">
       <form action="/add" method="POST" id="todoMemo">
         <div class="form-group">
-          <label>할 일</label>
+          <label style="font-family: IBM Plex Sans KR, sans-serif">할 일</label>
           <input
             type="text"
             class="form-control"
             name="title"
             id="title"
             placeholder="할 일 제목"
+            style="font-family: IBM Plex Sans KR, sans-serif"
           />
         </div>
         <br />
         <div class="form-group">
-          <label>세부 내용</label>
+          <label style="font-family: IBM Plex Sans KR, sans-serif"
+            >세부 내용</label
+          >
           <textarea
             rows="5"
             class="form-control custom-textarea"
@@ -38,18 +47,23 @@
             placeholder="세부 내용"
             id="detail"
             name="detail"
+            style="font-family: IBM Plex Sans KR, sans-serif"
           ></textarea>
         </div>
         <br />
         <div>
-          <button type="submit" class="btn btn-outline-secondary">
+          <button
+            type="submit"
+            class="btn btn-outline-secondary"
+            style="font-family: IBM Plex Sans KR, sans-serif"
+          >
             Submit
           </button>
           <a
             class="btn btn-outline-secondary"
             href="/list"
             role="button"
-            style="float: right"
+            style="float: right; font-family: IBM Plex Sans KR, sans-serif"
             >List 보기</a
           >
         </div>
