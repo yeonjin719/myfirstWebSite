@@ -8,6 +8,7 @@ const LocalStrategy = require("passport-local").Strategy; // 여기서 LocalStra
 const session = require("express-session");
 const { message } = require("statuses");
 const methodOverride = require("method-override");
+const bcrypt = require("bcrypt");
 
 var db;
 
@@ -35,8 +36,8 @@ MongoClient.connect(
 app.get("/images/:img", function (req, res) {
   res.sendFile(__dirname + "/images/" + req.params.img);
 });
-app.get("/write", function (req, res) {
-  res.render("write.ejs", { user: req.user ? req.user.id : undefined });
+app.get("/write", doLogin, async (req, res) => {
+  res.render("write.ejs", { user: req.user });
 });
 app.get("/list", async (req, res) => {
   let result = await db.collection("post").find().toArray();
@@ -46,23 +47,34 @@ app.get("/", function (req, res) {
   res.render("index.ejs", { user: req.user });
 });
 app.get("/join", function (req, res) {
-  res.render("join.ejs", { user: req.user });
+  res.render("join.ejs", {
+    user: req.user,
+    errorMessage: "",
+    userName: "",
+    userEmailID: "",
+    userPW: "",
+    cpassword: "",
+  });
 });
 app.get("/login", function (req, res) {
   res.render("login.ejs", { user: req.user });
 });
-app.get("/mypage", doLogin, function (req, res) {
-  res.render("mypage.ejs", { user: req.user });
+app.get("/mypage", doLogin, async (req, res) => {
+  const result = await db.collection("post").find().toArray();
+  res.render("mypage.ejs", {
+    user: req.user,
+    posts: result,
+  });
 });
 app.get("/fail", function (req, res) {
-  res.send("로그인 실패. 다시 시도하세요.");
+  res.send("로그인 실패. 다시 시도하세요.", { user: req.user });
 });
 app.get("/detail/:id", async (req, res) => {
   const result = await db.collection("post").findOne({ _id: +req.params.id });
   if (result) {
     res.status(200).render("detail.ejs", {
       post: result,
-      user: req.user ? req.user.id : undefined,
+      user: req.user,
     });
   } else {
     req.status(400).render("detail.ejs", {
@@ -144,26 +156,46 @@ app.delete("/delete", function (req, res) {
 
 app.get("/edit", function (req, res) {});
 
-// 회원가입 기능
+// 회원가입 기능 수정
 app.post("/joinAction", function (req, res) {
   var email = req.body.userEmailID;
   var name = req.body.userName;
   var pw = req.body.userPW;
-  var cpw = req.body.cpassword;
-  console.log("사용자 이름:", name);
-  console.log("사용자 이메일:", email);
-  console.log("비밀번호:", pw);
-  db.collection("member").insertOne(
-    {
-      userName: req.body.username,
-      userEmailID: req.body.userEmailID,
-      userPW: req.body.userPW,
-    },
-    function (에러, 결과) {
-      console.log("회원가입 완료");
-    }
-  );
-  res.redirect("/login");
+  var cpw = req.body.cpassword; // 비밀번호 확인 값
+
+  if (pw !== cpw) {
+    // 비밀번호가 일치하지 않으면
+    console.error("비밀번호가 일치하지 않음");
+    // 클라이언트에게 경고 메시지와 입력한 값들을 함께 전송합니다.
+    res.render("join.ejs", {
+      errorMessage: "비밀번호가 일치하지 않습니다.",
+      userName: name,
+      userEmailID: email,
+      userPW: pw,
+      cpassword: cpw,
+    });
+  } else {
+    console.log("사용자 이름:", name);
+    console.log("사용자 이메일:", email);
+    console.log("비밀번호:", pw);
+
+    db.collection("member").insertOne(
+      {
+        userName: req.body.userName,
+        userEmailID: req.body.userEmailID,
+        userPW: req.body.userPW,
+      },
+      function (에러, 결과) {
+        if (에러) {
+          console.error("회원가입 에러:", 에러);
+          res.status(500).send("회원가입 중 에러가 발생했습니다."); // 에러 발생 시 클라이언트에게 오류 메시지 전달
+        } else {
+          console.log("회원가입 완료");
+          res.redirect("/login?signupSuccess=true"); // 회원가입 성공 메시지를 포함하여 로그인 페이지로 리다이렉트
+        }
+      }
+    );
+  }
 });
 
 //로그인 기능
@@ -187,7 +219,7 @@ passport.use(
       passReqToCallback: false,
     },
     function (inputEmailId, inputPw, done) {
-      console.log("사용자 이름:", inputEmailId);
+      console.log("사용자 이메일:", inputEmailId);
       console.log("비밀번호:", inputPw);
 
       db.collection("member").findOne(
@@ -230,6 +262,7 @@ function doLogin(req, res, next) {
   if (req.user) {
     next();
   } else {
+    // alert("로그인이 필요합니다.");
     res.send("로그인이 필요합니다.");
   }
 }

@@ -10,6 +10,12 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <%- include('nav.ejs')%>
@@ -18,13 +24,13 @@
       <p class="h5">Log In</p>
     </div>
     <div class="container mt-3" style="width: 800px">
-      <form action="/loginAction" method="POST" id="newmember">
+      <form action="/loginAction" method="POST" id="loginID">
         <div class="container mt-3">
           <div class="input-group flex-nowrap">
             <span
               class="input-group-text"
               id="addon-wrapping"
-              style="width: 120px"
+              style="width: 120px; font-family: IBM Plex Sans KR, sans-serif"
               >이메일</span
             >
             <input
@@ -34,6 +40,7 @@
               aria-label="email"
               name="userEmailID"
               id="userEmailID"
+              style="font-family: IBM Plex Sans KR, sans-serif"
               required
             />
           </div>
@@ -43,7 +50,7 @@
             <span
               class="input-group-text"
               id="addon-wrapping"
-              style="width: 120px"
+              style="width: 120px; font-family: IBM Plex Sans KR, sans-serif"
               >비밀번호</span
             >
             <input
@@ -54,6 +61,7 @@
               id="userPW"
               name="userPW"
               aria-describedby="addon-wrapping"
+              style="font-family: IBM Plex Sans KR, sans-serif"
               required
             />
           </div>
@@ -62,13 +70,13 @@
           <a
             class="link-body-emphasis link-offset-2 link-underline-opacity-0 link-opacity-50"
             href="/join"
-            style="float: left"
+            style="float: left; font-family: IBM Plex Sans KR, sans-serif"
             >회원가입 하기</a
           >
           <button
             type="submit"
             class="btn btn-outline-secondary"
-            style="float: right"
+            style="float: right; font-family: IBM Plex Sans KR, sans-serif"
           >
             로그인
           </button>

@@ -10,6 +10,12 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <%- include('nav.ejs')%>
@@ -20,27 +26,64 @@
         <div class="container mt-3">
           <div class="card" style="width: 20rem; height: 10rem">
             <div class="card-body">
-              <h5 class="card-title">To Do List를 기록해보세요!</h5>
-              <h6 class="card-subtitle mb-2 text-body-secondary">
+              <h5
+                class="card-title"
+                style="font-family: IBM Plex Sans KR, sans-serif"
+              >
+                To Do List를 기록해보세요!
+              </h5>
+              <h6
+                class="card-subtitle mb-2 text-body-secondary"
+                style="font-family: IBM Plex Sans KR, sans-serif"
+              >
                 쉽게 작성하는 투두리스트!
               </h6>
-              <p class="card-text">웹 사이트에 쉽게 기록하고 이뤄나가보아요</p>
-              <a href="/write" class="card-link">To Do 작성</a>
-              <a href="/login" class="card-link">회원가입/로그인</a>
+              <p
+                class="card-text"
+                style="font-family: IBM Plex Sans KR, sans-serif"
+              >
+                웹 사이트에 쉽게 기록하고 이뤄나가보아요
+              </p>
+              <a
+                href="/write"
+                class="card-link"
+                style="font-family: IBM Plex Sans KR, sans-serif"
+                >To Do 작성</a
+              >
+              <a
+                href="/login"
+                class="card-link"
+                style="font-family: IBM Plex Sans KR, sans-serif"
+                >회원가입/로그인</a
+              >
             </div>
           </div>
         </div>
         <div class="container mt-3">
           <div class="card" style="width: 20rem; height: 10rem">
             <div class="card-body">
-              <h5 class="card-title">누가 개발했는 지 궁금해요!</h5>
-              <p class="card-text">
+              <h5
+                class="card-title"
+                style="font-family: IBM Plex Sans KR, sans-serif"
+              >
+                누가 개발했는 지 궁금해요!
+              </h5>
+              <p
+                class="card-text"
+                style="font-family: IBM Plex Sans KR, sans-serif"
+              >
                 개발자에 대한 정보는 링크에서 확인할 수 있습니다!
               </p>
-              <a href="/info" class="card-link">Info</a>
+              <a
+                href="/info"
+                class="card-link"
+                style="font-family: IBM Plex Sans KR, sans-serif"
+                >Info</a
+              >
               <a
                 href="https://github.com/yeonjin719?tab=overview&from=2023-09-01&to=2023-09-04"
                 class="card-link"
+                style="font-family: IBM Plex Sans KR, sans-serif"
                 >깃허브 바로가기</a
               >
             </div>

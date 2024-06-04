@@ -10,6 +10,12 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <!-- navigation bar html 첨부 -->
@@ -19,12 +25,58 @@
       <% if(typeof(error) !="undefined"){ %>
       <p><%= error %></p>
       <% } else { %>
-      <h1 class="text-center">상세 페이지</h1>
-      <div class="card" style="width: 100%">
+      <h2 class="text-center" style="font-family: IBM Plex Sans KR, sans-serif">
+        상세 페이지
+      </h2>
+      <br />
+      <div
+        class="card"
+        style="
+          width: 100%;
+          border: 1px solid #000;
+          border-radius: 10px;
+          display: flex;
+        "
+      >
         <div class="card-body">
-          <h5 class="card-title"><%= post.title %></h5>
-          <p class="card-text"><%= post.detail %></p>
-          <a href="/edit/<%= post._id %>" class="card-link">수정하기</a>
+          <div class="container m-3" style="align-self: center">
+            <h5
+              class="card-title"
+              style="font-family: IBM Plex Sans KR, sans-serif"
+            >
+              <%= post.title %>
+            </h5>
+            <p
+              class="card-text"
+              style="font-family: IBM Plex Sans KR, sans-serif"
+            >
+              <%= post.detail %>
+            </p>
+          </div>
+          <div class="container m-3" style="display: flex">
+            <div style="margin: auto">
+              <a
+                class="btn btn-outline-secondary"
+                href="/edit/<%= post._id %>"
+                role="button"
+                style="
+                  align-self: center;
+                  font-family: IBM Plex Sans KR, sans-serif;
+                "
+                >수정하기</a
+              >
+              <a
+                class="btn btn-outline-secondary deleteButton"
+                data-id="<%=post._id%>"
+                role="button"
+                style="
+                  align-self: center;
+                  font-family: IBM Plex Sans KR, sans-serif;
+                "
+                >삭제하기</a
+              >
+            </div>
+          </div>
         </div>
       </div>
       <% } %>
@@ -40,5 +92,19 @@
       integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
       crossorigin="anonymous"
     ></script>
+    <script>
+      // 삭제 버튼이 눌리면
+      $(".btn btn-outline-secondary deleteButton").click(function () {
+        $.ajax({
+          method: "DELETE",
+          url: "/delete",
+          data: { _id: $(this).data("id") },
+        }).done((결과) => {
+          // 눌린 버튼의 부모에 해당하는 div의 부모에 해당하는 div를 fadeout 시킴
+          // $(this).parent("div").parent("div").fadeOut();
+          window.location.href = "/mypage";
+        });
+      });
+    </script>
   </body>
 </html>
