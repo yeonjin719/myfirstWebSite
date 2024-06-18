@@ -30,10 +30,12 @@
             <h6 style="font-family: IBM Plex Sans KR, sans-serif"><strong><%=posts[i].ID%></strong></h6>
             <h5 style="font-family: IBM Plex Sans KR, sans-serif"><strong><%= posts[i].title %></strong></h5>
           </div>
+          <% if (user.userEmailID == posts[i].ID){%>
           <div class="container m-3" style="align-self: center;">
             <!-- 버튼 오른쪽 정렬 -->
             <button type="button" class="btn-close" aria-label="Close" style="float:right" data-id="<%= posts[i]._id %>"></button>
           </div>
+          <%}%>
         </div>
       <% } %>
     </div>
