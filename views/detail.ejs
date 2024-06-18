@@ -40,19 +40,31 @@
       >
         <div class="card-body">
           <div class="container m-3" style="align-self: center">
+            <h6 style="font-family: IBM Plex Sans KR, sans-serif">
+              ID: <strong><%=post.ID%></strong>
+            </h6>
+            <h6 style="font-family: IBM Plex Sans KR, sans-serif">
+              작성 시간: <strong><%=post.writeDate%></strong>
+            </h6>
+            <br />
             <h5
               class="card-title"
               style="font-family: IBM Plex Sans KR, sans-serif"
             >
               <%= post.title %>
             </h5>
+
             <p
               class="card-text"
               style="font-family: IBM Plex Sans KR, sans-serif"
             >
               <%= post.detail %>
             </p>
+            <h6 style="font-family: IBM Plex Sans KR, sans-serif">
+              마감 기한: <%=post.DueDate%>까지
+            </h6>
           </div>
+          <%if (user.userEmailID == post.ID || !user.userEmailID){%>
           <div class="container m-3" style="display: flex">
             <div style="margin: auto">
               <a
@@ -77,6 +89,7 @@
               >
             </div>
           </div>
+          <% } %>
         </div>
       </div>
       <% } %>
