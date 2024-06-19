@@ -53,6 +53,34 @@
               class="input-group-text"
               id="addon-wrapping"
               style="width: 120px"
+              >닉네임</span
+            >
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Nickname"
+              aria-label="nickname"
+              id="nickname"
+              name="nickname"
+              aria-describedby="addon-wrapping"
+              required
+            />
+            <button
+              id="doubleNickname"
+              type="button"
+              class="btn btn-outline-secondary"
+            >
+              닉네임 중복확인
+            </button>
+            <!-- required 넣어주면 미작성인채로 submit이 되는 걸 방지해줌 -->
+          </div>
+        </div>
+        <div class="container mt-3">
+          <div class="input-group flex-nowrap">
+            <span
+              class="input-group-text"
+              id="addon-wrapping"
+              style="width: 120px"
               >이메일</span
             >
             <input
@@ -157,6 +185,7 @@
       if (errorMessage) {
         alert(errorMessage);
         document.getElementById("userName").value = "<%= userName %>";
+        document.getElementById("userName").value = "<%= userName %>";
         document.getElementById("userEmailID").value = "<%= userEmailID %>";
         document.getElementById("userPW").value = "<%= userPW %>";
         document.getElementById("cpassword").value = "<%= cpassword %>";
@@ -167,7 +196,7 @@
         .getElementById("newmember")
         .addEventListener("submit", function (event) {
           var userEmailID = document.getElementById("userEmailID").value;
-          var username = document.getElementById("userName").value;
+          var username = document.getElementById("nickname").value;
           var userPW = document.getElementById("userPW").value;
           var cpassword = document.getElementById("cpassword").value;
           if (userPW !== cpassword) {
@@ -192,7 +221,35 @@
             },
             dataType: "json", // JSON 명시
             success: function (response) {
-              if (response.message === "중복된 아이디입니다.") {
+              if (response.message === "중복된 이메일입니다.") {
+                $("#userEmailID").val(""); // 입력 필드 초기화
+                alert(response.message);
+                $("#signupButton").prop("disabled", true);
+              } else {
+                alert(response.message);
+                $("#signupButton").prop("disabled", false);
+              }
+            },
+            error: function () {
+              alert("에러");
+            },
+          });
+        });
+    </script>
+    <script>
+      document
+        .getElementById("doubleNickname")
+        .addEventListener("click", function () {
+          var nickname = $("#nickname").val();
+          $.ajax({
+            method: "POST",
+            url: "/duplicateNickname",
+            data: {
+              nickname: nickname,
+            },
+            dataType: "json", // JSON 명시
+            success: function (response) {
+              if (response.message === "중복된 닉네임입니다.") {
                 $("#userEmailID").val(""); // 입력 필드 초기화
                 alert(response.message);
                 $("#signupButton").prop("disabled", true);

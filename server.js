@@ -11,6 +11,8 @@ const methodOverride = require("method-override");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 var db;
+const path = require("path");
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
@@ -40,7 +42,11 @@ app.get("/write", doLogin, async (req, res) => {
   res.render("write.ejs", { user: req.user });
 });
 app.get("/list", doLogin, async (req, res) => {
-  let result = await db.collection("post").find().toArray();
+  let result = await db
+    .collection("post")
+    .find()
+    .sort({ DueDate: 1 })
+    .toArray();
   res.render("list.ejs", { posts: result, user: req.user });
 });
 app.get("/", function (req, res) {
@@ -60,7 +66,11 @@ app.get("/login", function (req, res) {
   res.render("login.ejs", { user: req.user });
 });
 app.get("/mypage", doLogin, async (req, res) => {
-  const result = await db.collection("post").find().toArray();
+  const result = await db
+    .collection("post")
+    .find()
+    .sort({ DueDate: 1 })
+    .toArray();
   res.render("mypage.ejs", {
     user: req.user,
     posts: result,
@@ -83,6 +93,29 @@ app.get("/detail/:id", doLogin, async (req, res) => {
     });
   }
 });
+app.get("/mypage/mydonelist", doLogin, async (req, res) => {
+  const result = await db
+    .collection("post")
+    .find()
+    .sort({ DueDate: 1 })
+    .toArray();
+  res.render("mypageDonelist.ejs", {
+    user: req.user,
+    posts: result,
+  });
+});
+
+app.get("/mypage/account", doLogin, async (req, res) => {
+  res.render("mypageAccount.ejs", {
+    user: req.user,
+  });
+});
+app.get("/mypage/editaccount", doLogin, async (req, res) => {
+  res.render("editAccount.ejs", {
+    user: req.user,
+  });
+});
+
 app.get("/edit/:id", async (req, res) => {
   const result = await db.collection("post").findOne({ _id: +req.params.id });
   if (result) {
@@ -94,13 +127,21 @@ app.get("/edit/:id", async (req, res) => {
   }
 });
 app.post("/edit/:id", async (req, res) => {
-  const { title, detail } = req.body;
+  const { title, detail, DueDate } = req.body;
   const id = parseInt(req.params.id);
   const {
     result: { nModified },
-  } = await db
-    .collection("post")
-    .updateOne({ _id: +id }, { $set: { title: title, detail: detail } });
+  } = await db.collection("post").updateOne(
+    { _id: +id },
+    {
+      $set: {
+        title: title,
+        detail: detail,
+        DueDate: DueDate,
+        writeDate: getToday(),
+      },
+    }
+  );
   if (nModified == 1) {
     res.redirect("/list");
   } else {
@@ -119,10 +160,9 @@ app.post("/add", (req, res) => {
           title: req.body.title,
           detail: req.body.detail,
           DueDate: req.body.DueDate,
+          nickname: req.user.nickname,
           ID: req.user.userEmailID,
-          writeDate: new Date().toLocaleString("en-US", {
-            timeZone: "Asia/Seoul",
-          }),
+          writeDate: getToday(),
         },
         function (에러, 결과) {
           console.log("저장완료");
@@ -167,6 +207,7 @@ app.get("/edit", function (req, res) {});
 app.post("/joinAction", function (req, res) {
   var email = req.body.userEmailID;
   var name = req.body.userName;
+  var nickname = req.body.nickname;
   var pw = req.body.userPW;
   var cpw = req.body.cpassword; // 비밀번호 확인 값
 
@@ -183,6 +224,7 @@ app.post("/joinAction", function (req, res) {
     });
   } else {
     console.log("사용자 이름:", name);
+    console.log("사용자 닉네임:", nickname);
     console.log("사용자 이메일:", email);
     console.log("비밀번호:", pw);
     bcrypt.hash(pw, saltRounds, (err, hashPassword) => {
@@ -190,6 +232,7 @@ app.post("/joinAction", function (req, res) {
       db.collection("member").insertOne(
         {
           userName: req.body.userName,
+          nickname: req.body.nickname,
           userEmailID: req.body.userEmailID,
           userPW: hashPassword,
         },
@@ -286,19 +329,40 @@ function doLogin(req, res, next) {
     // alert({ message: "로그인이 필요한 서비스입니다." });
   }
 }
-// 아이디 중복 확인 기능
+// 이메일 중복 확인 기능
 app.post("/duplicateID", function (req, res) {
   db.collection("member").findOne(req.body, function (error, result) {
     if (result) {
-      res.json({ message: "중복된 아이디입니다." });
+      res.json({ message: "중복된 이메일입니다." });
     } else {
-      res.json({ message: "사용 가능한 아이디입니다." });
+      res.json({ message: "사용 가능한 이메일입니다." });
     }
   });
 });
 
+// 아이디 중복 확인 기능
+app.post("/duplicateNickname", function (req, res) {
+  db.collection("member").findOne(req.body, function (error, result) {
+    if (result) {
+      res.json({ message: "중복된 닉네임입니다." });
+    } else {
+      res.json({ message: "사용 가능한 닉네임입니다." });
+    }
+  });
+});
 // 로그아웃 기능
 app.post("/logout", (req, res) => {
   req.session.destroy(); // 세션 파기
   res.redirect("/");
 });
+
+function getToday() {
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = ("0" + (1 + date.getMonth())).slice(-2);
+  var day = ("0" + date.getDate()).slice(-2);
+  var time = date.getHours();
+  var min = date.getMinutes();
+  var sec = date.getSeconds();
+  return year + "/" + month + "/" + day + " " + time + ":" + min + ":" + sec;
+}

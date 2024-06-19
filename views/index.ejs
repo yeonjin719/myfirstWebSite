@@ -44,18 +44,51 @@
               >
                 웹 사이트에 쉽게 기록하고 이뤄나가보아요
               </p>
-              <a
-                href="/write"
-                class="card-link"
-                style="font-family: IBM Plex Sans KR, sans-serif"
-                >To Do 작성</a
-              >
-              <a
-                href="/login"
-                class="card-link"
-                style="font-family: IBM Plex Sans KR, sans-serif"
-                >회원가입/로그인</a
-              >
+              <div style="float: flex">
+                <% if (!user) { %>
+                <div class="d-flex align-items-center">
+                  <a
+                    href="/write"
+                    class="card-link"
+                    style="
+                      font-family: IBM Plex Sans KR, sans-serif;
+                      margin-right: 35px;
+                    "
+                    >To Do 작성</a
+                  >
+                  <a
+                    href="/login"
+                    class="card-link"
+                    style="font-family: IBM Plex Sans KR, sans-serif"
+                    >회원가입/로그인</a
+                  >
+                </div>
+                <% } else { %>
+                <div class="d-flex align-items-center">
+                  <a
+                    href="/write"
+                    class="card-link"
+                    style="
+                      font-family: IBM Plex Sans KR, sans-serif;
+                      margin-right: 35px;
+                    "
+                    >To Do 작성</a
+                  >
+                  <form action="/logout" method="post" class="d-inline">
+                    <button
+                      type="submit"
+                      class="btn btn-link p-0"
+                      style="
+                        font-family: IBM Plex Sans KR, sans-serif;
+                        text-decoration: underline;
+                      "
+                    >
+                      Log out
+                    </button>
+                  </form>
+                </div>
+                <% } %>
+              </div>
             </div>
           </div>
         </div>
@@ -90,13 +123,21 @@
           </div>
         </div>
       </div>
-      <div class="container mt-3" style="align-self: center">
+      <div class="container mt-3" style="display: flex">
         <img
           height="500"
           src="images/mainpage.jpeg"
-          class="rounded float-end"
+          class="rounded float"
           alt="개발자가 키우는 귀여운 고양이 사진"
-          style="float: right"
+          style="float: left"
+        />
+        <br />
+        <img
+          height="500"
+          src="images/mainpagetwo.jpg"
+          class="rounded float"
+          alt="개발자가 키우는 귀여운 고양이 사진2"
+          style="float: left"
         />
       </div>
     </div>

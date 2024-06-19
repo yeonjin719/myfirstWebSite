@@ -27,12 +27,12 @@
         
         <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/mypage"  style="color: black"
+              <a class="nav-link" aria-current="page" href="/mypage"  style="color: black"
                 >My To Do List</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link " href="/mypage/mydonelist" style="color: black"
+              <a class="nav-link active" href="/mypage/mydonelist" style="color: black"
                 >My Done List</a
               >
             </li>
@@ -61,34 +61,33 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      function checkLogin() {
-        var _user = "${user}";
-        if (user == "") {
-          alert("로그인 후 사용할 수 있는 서비스 입니다.");
-          location.href = "/login";
+      function checkLogin(){
+        var _user = '${user}'
+        if (user == ""){
+          alert("로그인 후 사용할 수 있는 서비스 입니다.")
+          location.href="/login"
         }
       }
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
       // Delete button click event
-      $(document).on("click", ".btn-close", function () {
-        var postId = $(this).data("id");
+      $(document).on('click', '.btn-close', function() {
+        var postId = $(this).data('id');
         $.ajax({
           method: "DELETE",
-          url: "/delete",
+          url: '/delete',
           data: { _id: postId },
-          success: function (response) {
+          success: function(response) {
             // Remove the todo item from the UI
-            $('button[data-id="' + postId + '"]')
-              .closest("#OneTodo")
-              .fadeOut();
+            $('button[data-id="' + postId + '"]').closest('#OneTodo').fadeOut();
           },
-          error: function (error) {
-            console.error("Error:", error);
-          },
+          error: function(error) {
+            console.error('Error:', error);
+          }
         });
       });
     </script>
+    
   </body>
 </html>
