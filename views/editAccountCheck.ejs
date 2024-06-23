@@ -18,7 +18,7 @@
     />
   </head>
   <body>
-    <%- include('nav.ejs')%>
+    <%- include('nav.ejs') %>
     <div class="container mt-5" style="float: flex">
       <div class="container mt-5" style="display: flex">
         <img
@@ -36,101 +36,60 @@
         >
           <strong>계정 설정</strong>
         </h4>
+        <br>
       </div>
-
       <ul class="nav nav-tabs">
         <li class="nav-item">
           <a
             class="nav-link"
             aria-current="page"
             href="/mypage"
-            style="color: black"
+            style="color: black; font-family: IBM Plex Sans KR, sans-serif"
             >My To Do List</a
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/mypage/mydonelist" style="color: black"
+          <a class="nav-link" href="/mypage/myDoneList" style="color: black; font-family: IBM Plex Sans KR, sans-serif"
             >My Done List</a
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="/mypage/account" style="color: black"
+          <a class="nav-link active" href="/mypage/account" style="color: black; font-family: IBM Plex Sans KR, sans-serif"
             >account</a
           >
         </li>
       </ul>
     </div>
+    
     <div class="container mt-3">
-      <center>
-        <img
-          height="200"
-          src="/images/person.jpg"
-          class="rounded float"
-          alt="person"
-        />
-        <div class="container mt-3">
-          <input
-            class="form-control"
-            type="file"
-            id="formFile"
-            style="font-family: IBM Plex Sans KR, sans-serif; width: 300px"
-          />
-        </div>
-        <div class="container mt-3">
-          <label
-            style="
-              font-family: IBM Plex Sans KR, sans-serif;
-              margin-right: 35px;
-            "
-            >닉네임</label
-          >
-          <input
-            type="text"
-            value="<%= user.nickname %>"
-            style="font-family: IBM Plex Sans KR, sans-serif"
-          />
-        </div>
-        <div class="container mt-3">
-          <label
-            style="
-              font-family: IBM Plex Sans KR, sans-serif;
-              margin-right: 35px;
-            "
-            >이름</label
-          >
-          <%=user.userName%>
-        </div>
-        <div class="container mt-3">
-          <label
-            style="
-              font-family: IBM Plex Sans KR, sans-serif;
-              margin-right: 35px;
-            "
-            >Email</label
-          >
-          <%=user.userEmailID%>
-        </div>
-        <br />
-        <a
-          class="btn btn-outline-secondary"
-          href="/mypage/account"
-          role="button"
-          style="align-self: center; font-family: IBM Plex Sans KR, sans-serif"
-          >완료</a
-        >
-
-        <center>
-          <div class="container mt-3">
-            <p>
-              <a
-                class="link-opacity-50 link-secondary link-underline-opacity-50"
-                href="#"
-                >탈퇴하기</a
-              >
-            </p>
+      <h3>개인정보 확인</h3>
+      <form action="/mypage/editAccountCheckAction" method="POST" id="loginID">
+        <div class="mb-3 row">
+            <label for="staticEmail" class="col-sm-2 col-form-label" style="font-family: IBM Plex Sans KR, sans-serif">Email</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control-plaintext" id="userEmailID" value="<%= user.userEmailID %>" style="font-family: IBM Plex Sans KR, sans-serif">
+            </div>
           </div>
-        </center>
-      </center>
+          <div class="mb-3 row">
+            <label for="inputPassword" class="col-sm-2 col-form-label" style="font-family: IBM Plex Sans KR, sans-serif">Password</label>
+            <div class="col-sm-10">
+              <input type="password" class="form-control" id="userPW" name="userPW" style="font-family: IBM Plex Sans KR, sans-serif">
+            </div>
+          </div>
+        </div>
+        <div class="container mt-3" style="display: flex">
+          <button
+            type="submit"
+            class="btn btn-outline-secondary"
+            style="
+              align-self: center;
+              font-family: IBM Plex Sans KR, sans-serif;
+            "
+          >
+            확인
+          </button>
+        </div>
+      </form>
     </div>
 
     <script
@@ -160,10 +119,3 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </body>
 </html>
-<script type="text/javascript">
-  $(document).ready(function () {
-    if (document.referrer == "" || document.referrer == null) {
-      document.location.href = "/mypage/editAccountCheck";
-    }
-  });
-</script>

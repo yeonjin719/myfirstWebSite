@@ -6,7 +6,6 @@ const MongoClient = require("mongodb").MongoClient;
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy; // 여기서 LocalStrategy로 수정
 const session = require("express-session");
-const { message } = require("statuses");
 const methodOverride = require("method-override");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -93,7 +92,7 @@ app.get("/detail/:id", doLogin, async (req, res) => {
     });
   }
 });
-app.get("/mypage/mydonelist", doLogin, async (req, res) => {
+app.get("/mypage/myDoneList", doLogin, async (req, res) => {
   const result = await db
     .collection("post")
     .find()
@@ -110,10 +109,41 @@ app.get("/mypage/account", doLogin, async (req, res) => {
     user: req.user,
   });
 });
-app.get("/mypage/editaccount", doLogin, async (req, res) => {
-  res.render("editAccount.ejs", {
-    user: req.user,
-  });
+
+function ensureVerifiedForEditAccount(req, res, next) {
+  if (req.session.isVerifiedForEditAccount) {
+    next();
+  } else {
+    res.redirect("/mypage/editAccountCheck");
+  }
+}
+
+function clearEditAccountVerification(req, res, next) {
+  if (
+    req.path !== "/mypage/editAccountCheckAction" &&
+    req.path !== "/mypage/editAccount"
+  ) {
+    req.session.isVerifiedForEditAccount = false;
+  }
+  next();
+}
+
+app.get(
+  "/mypage/editAccount",
+  doLogin,
+  ensureVerifiedForEditAccount,
+  async (req, res) => {
+    res.render("editAccount.ejs", {
+      user: req.user,
+    });
+  }
+);
+
+// 모든 요청에 대해 권한 삭제 체크
+app.use(clearEditAccountVerification);
+
+app.get("/mypage/editAccountCheck", doLogin, function (req, res) {
+  res.render("editAccountCheck.ejs", { user: req.user });
 });
 
 app.get("/edit/:id", async (req, res) => {
@@ -259,6 +289,42 @@ app.post(
   }
 );
 
+app.post("/mypage/editAccountCheckAction", function (req, res) {
+  var inputEmailID = req.user.userEmailID;
+  var userPW = req.body.userPW;
+  db.collection("member").findOne(
+    { userEmailID: inputEmailID },
+    function (err, user) {
+      if (err) {
+        console.log("데이터베이스 오류:", err);
+        return res.status(500).send("데이터베이스 오류");
+      }
+      if (!user) {
+        console.log(inputEmailID);
+        console.log("사용자를 찾을 수 없습니다.");
+        return res.status(400).send("사용자를 찾을 수 없습니다.");
+      }
+      bcrypt.compare(userPW, req.user.userPW, function (err, isMatch) {
+        if (err) {
+          console.log("입력한 비밀번호: ", userPW);
+          console.log("데이터베이스 비밀번호: ", req.user.userPW);
+          console.log("비밀번호 비교 오류:", err);
+          console.log("");
+          return res.status(500).send("비밀번호 비교 오류");
+        }
+        if (isMatch) {
+          console.log("로그인 성공");
+          req.session.isVerifiedForEditAccount = true;
+          return res.redirect("/mypage/editAccount");
+        } else {
+          console.log("비밀번호가 틀렸습니다.");
+          return res.status(400).send("비밀번호가 틀렸습니다.");
+        }
+      });
+    }
+  );
+});
+
 // Passport 설정
 passport.use(
   new LocalStrategy(
@@ -324,11 +390,9 @@ function doLogin(req, res, next) {
       "<script type=\"text/javascript\">alert('LogIn First Please')</script>"
     );
     res.write('<script>window.location="/login"</script>');
-    // res.status(401).redirect("/login");
-    // alert("로그인이 필요합니다.");
-    // alert({ message: "로그인이 필요한 서비스입니다." });
   }
 }
+
 // 이메일 중복 확인 기능
 app.post("/duplicateID", function (req, res) {
   db.collection("member").findOne(req.body, function (error, result) {

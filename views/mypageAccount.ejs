@@ -20,12 +20,13 @@
   <body>
     <%- include('nav.ejs')%>
     <div class="container mt-5" style="float: flex">
-      <div class="container mt-5" style="display: flex">
+      <div class="container mt-10" style="display: flex">
         <img
-          height="80"
+          height="70"
           src="/images/gear-1077563_1920.png"
           class="rounded float"
           alt="gear"
+          style="margin: 100"
         />
         <h4
           style="
@@ -99,14 +100,25 @@
           <%=user.userEmailID%>
         </div>
         <br />
-
-        <a
-          class="btn btn-outline-secondary"
-          href="/mypage/editaccount"
-          role="button"
-          style="align-self: center; font-family: IBM Plex Sans KR, sans-serif"
-          >수정하기</a
-        >
+        <div class="container mt-3">
+          <a
+            class="btn btn-outline-secondary"
+            href="/mypage/editAccountCheck"
+            role="button"
+            style="
+              align-self: center;
+              font-family: IBM Plex Sans KR, sans-serif;
+            "
+            >수정하기</a
+          >
+          <br />
+          <br />
+          <a
+            class="link-opacity-50 link-secondary link-underline-opacity-50"
+            href="#"
+            >비밀번호 찾기</a
+          >
+        </div>
       </center>
     </div>
 
