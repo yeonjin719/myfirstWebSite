@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>To Do Web</title>
@@ -16,35 +16,39 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap"
       rel="stylesheet"
     />
-  </head>
-  <body>
+</head>
+<body>
     <!-- navigation bar html 첨부 -->
     <%- include('nav.ejs')%>
     <!-- 전체 todo 목록이 담겨있는 div(container) -->
     <div class="container mt-3">
-      <h2 style="font-family: IBM Plex Sans KR, sans-serif">To Do List💛</h2>
-      <% for(let i=0;i<posts.length;i++){ %>
-        <!-- 한 개의 todo가 담겨있는 div(container) -->
-        <div class="container m-3" style="border: 1px solid #000; border-radius: 10px; display: flex; " id="OneTodo" >
-          <img height="50" src="/images/person.jpg" class="rounded float" alt="profile" style="align-self: center; margin-left: 5px; "/>
-          <div class="container m-3" style="align-self: center;"onclick="location.href='/detail/<%= posts[i]._id %>'">
-            <h6 style="font-family: IBM Plex Sans KR, sans-serif"><strong><%=posts[i].nickname%></strong></h6>
-            <h5 style="font-family: IBM Plex Sans KR, sans-serif"><strong><%= posts[i].title %></strong></h5>
-          </div>
-          <% if (user.userEmailID == posts[i].ID){%>
-          <div class="container m-3" style="align-self: center;">
-            <!-- 버튼 오른쪽 정렬 -->
-            <button type="button" class="btn-close" aria-label="Close" style="float:right" data-id="<%= posts[i]._id %>"></button>
-          </div>
-          <%} else {%>
-            <div class="container m-3" style=" align-self: center;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16" style="float:right;">
-                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
-              </svg>
+        <h2 style="font-family: IBM Plex Sans KR, sans-serif">To Do List💛</h2>
+        <% for(let i=0;i<posts.length;i++){ %>
+            <% if (posts[i].isDone == false){ %>
+            <!-- 한 개의 todo가 담겨있는 div(container) -->
+            <div class="container m-3" style="border: 1px solid #000; border-radius: 10px; display: flex; " id="OneTodo" >
+                <img height="50" src="/images/person.jpg" class="rounded float" alt="profile" style="align-self: center; margin-left: 5px; "/>
+                <div class="container m-3" style="align-self: center;"onclick="location.href='/detail/<%= posts[i]._id %>'">
+                    <h6 style="font-family: IBM Plex Sans KR, sans-serif"><strong><%=posts[i].nickname%></strong></h6>
+                    <h5 style="font-family: IBM Plex Sans KR, sans-serif"><strong><%= posts[i].title %></strong></h5>
+                </div>
+                <% if (user.userEmailID == posts[i].ID){%>
+                    <div class="container m-3" style=" align-self: center;">
+                        <div style="float: right;">
+                          <button type="button" class="btn btn-outline-light" id="check" onclick="markAsDone('<%= posts[i]._id %>')">✔️</button>
+
+                        </div>
+                    </div>
+                <%} else {%>
+                    <div class="container m-3" style=" align-self: center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16" style="float:right;">
+                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                        </svg>
+                    </div>
+                <%}%>
             </div>
-          <%}%>
-        </div>
-      <% } %>
+        <% } %>
+        <% } %>
     </div>
 
     <script
@@ -63,19 +67,21 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <!-- 삭제(X)버튼이 눌렸을 때 작동되는 script -->
     <script>
-      // 삭제 버튼이 눌리면
-    $('.btn-close').click(function(){
-      $.ajax({
-      method:"DELETE",
-      url: '/delete',
-      data : {_id:$(this).data('id')}
-    }).done((결과)=>{
-      // 눌린 버튼의 부모에 해당하는 div의 부모에 해당하는 div를 fadeout 시킴
-      $(this).parent('div').parent('div').fadeOut();
-    })
-    });
-  </script>
-  </body>
+      function markAsDone(postId) {
+        $.ajax({
+          url: '/update-status/' + postId,
+          type: 'PUT',
+          success: function(response) {
+            alert('Task marked as done!');
+            location.reload(); // Reload the page to reflect changes
+          },
+          error: function(error) {
+            alert('Failed to mark task as done!');
+          }
+        });
+      }
+    </script>
+    
+</body>
 </html>

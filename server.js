@@ -11,6 +11,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 var db;
 const path = require("path");
+const { Script } = require("vm");
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -76,8 +77,12 @@ app.get("/mypage", doLogin, async (req, res) => {
   });
 });
 app.get("/fail", function (req, res) {
-  res.send("로그인 실패. 다시 시도하세요.", { user: req.user });
+  res.render("fail.ejs");
 });
+app.get("/failchecking", function (req, res) {
+  res.render("failchecking.ejs");
+});
+
 app.get("/detail/:id", doLogin, async (req, res) => {
   const result = await db.collection("post").findOne({ _id: +req.params.id });
   if (result) {
@@ -142,10 +147,52 @@ app.get(
 // 모든 요청에 대해 권한 삭제 체크
 app.use(clearEditAccountVerification);
 
+// 마이페이지에서 계정 수정 시
 app.get("/mypage/editAccountCheck", doLogin, function (req, res) {
   res.render("editAccountCheck.ejs", { user: req.user });
 });
 
+app.post("/mypage/editAccountCheckAction", function (req, res) {
+  var inputEmailID = req.user.userEmailID;
+  var userPW = req.body.userPW;
+  db.collection("member").findOne(
+    { userEmailID: inputEmailID },
+    function (err, user) {
+      if (err) {
+        console.log("데이터베이스 오류:", err);
+        res.json({ message: "데이터베이스 오류" });
+        return res.redirect("/mypage/editAccountCheck?flag=0");
+      }
+      if (!user) {
+        console.log(inputEmailID);
+        console.log("사용자를 찾을 수 없습니다.");
+        console.json({ message: "사용자를 찾을 수 없습니다." });
+        return res.redirect("/mypage/editAccountCheck?flag=1");
+      }
+      bcrypt.compare(userPW, req.user.userPW, function (err, isMatch) {
+        if (err) {
+          console.log("입력한 비밀번호: ", userPW);
+          console.log("데이터베이스 비밀번호: ", req.user.userPW);
+          console.log("비밀번호 비교 오류:", err);
+          console.log("");
+          res.json({ message: "비밀번호 비교 오류" });
+          return res.redirect("/mypage/editAccountCheck?flag=2");
+        }
+        if (isMatch) {
+          console.log("로그인 성공");
+          req.session.isVerifiedForEditAccount = true;
+          return res.redirect("/mypage/editAccount");
+        } else {
+          console.log("비밀번호가 틀렸습니다.");
+          res.json({ message: "비밀번호가 틀렸습니다." });
+          return res.redirect("/mypage/editAccountCheck?flag=3");
+        }
+      });
+    }
+  );
+});
+
+// 게시물 수정
 app.get("/edit/:id", async (req, res) => {
   const result = await db.collection("post").findOne({ _id: +req.params.id });
   if (result) {
@@ -178,6 +225,7 @@ app.post("/edit/:id", async (req, res) => {
     res.status(400).send("Fail to modify the post.");
   }
 });
+
 //글 작성 기능
 app.post("/add", (req, res) => {
   db.collection("counter").findOne(
@@ -193,6 +241,7 @@ app.post("/add", (req, res) => {
           nickname: req.user.nickname,
           ID: req.user.userEmailID,
           writeDate: getToday(),
+          isDone: false,
         },
         function (에러, 결과) {
           console.log("저장완료");
@@ -211,6 +260,25 @@ app.post("/add", (req, res) => {
       res.redirect("/list");
     }
   );
+});
+
+// 완료 버튼 눌렀을 떄 (체크박스)
+app.put("/update-status/:id", async (req, res) => {
+  try {
+    const postId = parseInt(req.params.id);
+    const result = await db
+      .collection("post")
+      .updateOne({ _id: postId }, { $set: { isDone: true } });
+
+    if (result.modifiedCount === 1) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(500);
+    }
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
 });
 
 // 글 삭제 기능
@@ -288,42 +356,6 @@ app.post(
     res.redirect("/");
   }
 );
-
-app.post("/mypage/editAccountCheckAction", function (req, res) {
-  var inputEmailID = req.user.userEmailID;
-  var userPW = req.body.userPW;
-  db.collection("member").findOne(
-    { userEmailID: inputEmailID },
-    function (err, user) {
-      if (err) {
-        console.log("데이터베이스 오류:", err);
-        return res.status(500).send("데이터베이스 오류");
-      }
-      if (!user) {
-        console.log(inputEmailID);
-        console.log("사용자를 찾을 수 없습니다.");
-        return res.status(400).send("사용자를 찾을 수 없습니다.");
-      }
-      bcrypt.compare(userPW, req.user.userPW, function (err, isMatch) {
-        if (err) {
-          console.log("입력한 비밀번호: ", userPW);
-          console.log("데이터베이스 비밀번호: ", req.user.userPW);
-          console.log("비밀번호 비교 오류:", err);
-          console.log("");
-          return res.status(500).send("비밀번호 비교 오류");
-        }
-        if (isMatch) {
-          console.log("로그인 성공");
-          req.session.isVerifiedForEditAccount = true;
-          return res.redirect("/mypage/editAccount");
-        } else {
-          console.log("비밀번호가 틀렸습니다.");
-          return res.status(400).send("비밀번호가 틀렸습니다.");
-        }
-      });
-    }
-  );
-});
 
 // Passport 설정
 passport.use(
